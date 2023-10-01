@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import Contentstack from "contentstack";
 
 export default function Newspage() {
@@ -20,10 +21,14 @@ export default function Newspage() {
   }, []);
 
   return (
-    <div>
-      <h2>Newspage</h2>
+    <div className="flex gap-2 flex-col">
+      <h2>All news</h2>
       {news.map((newsItem) => (
-        <h3>{newsItem.title}</h3>
+        <div className="p-2 rounded-xl bg-sky-100" >
+          <Link key={newsItem.title} to={newsItem.uid}>
+            <h3>{newsItem.title}</h3>
+          </Link>
+        </div>
       ))}
     </div>
   );

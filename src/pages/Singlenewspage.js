@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Contentstack from "contentstack";
 import richTextRenderOptions from "../utils/richTextRenderOptions";
+import Authorspotlight from "../components/Authorspotlight";
 
 export default function Singlenewspage() {
   const { id: newsId } = useParams();
@@ -23,7 +24,7 @@ export default function Singlenewspage() {
       .then((entry) => {
         Contentstack.Utils.jsonToHTML({
           entry,
-          paths: ["body"],
+          paths: ["body", "author.bio"],
           renderOption: richTextRenderOptions,
         });
         setNews(entry);
@@ -39,13 +40,17 @@ export default function Singlenewspage() {
           <h2>{news.title}</h2>
           <p>Posted on: {news.date}</p>
           <p>By: {news.author[0].title}</p>
-          <div dangerouslySetInnerHTML={{ __html: news.body }} />
+          <div
+            className="flex flex-col gap-1"
+            dangerouslySetInnerHTML={{ __html: news.body }}
+          />
           <h2>About the author:</h2>
-          <div className="p-4 rounded-xl bg-sky-100">
-            <h3>{news.author[0]?.title}</h3>
-            <h3>{news.author[0]?.email}</h3>
-            <img src={news.author[0]?.photo?.url} alt="" />
-          </div>
+          <Authorspotlight
+            name={news.author[0]?.title}
+            email={news.author[0]?.email}
+            photoUrl={news.author[0]?.photo?.url}
+            bio={news.author[0]?.bio}
+          />
         </div>
       )}
     </div>

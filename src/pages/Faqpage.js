@@ -4,7 +4,7 @@ import Contentstack from "contentstack";
 import richTextRenderOptions from "../utils/richTextRenderOptions";
 
 export default function Faqpage() {
-  const [faqs, setFaqs] = useState([]);
+  const [pageData, setPageDate] = useState([]);
 
   useEffect(() => {
     const Stack = Contentstack.Stack({
@@ -13,26 +13,38 @@ export default function Faqpage() {
       environment: process.env.REACT_APP_ENVIROMENT,
       region: Contentstack.Region.EU,
     });
-    const Query = Stack.ContentType("faq").Query();
-    Query.language("en-us")
+    Stack.ContentType("faq")
+      .Query()
+      .language("en-us")
       .toJSON()
       .find()
       .then((entry) => {
         Contentstack.Utils.jsonToHTML({
           entry,
-          paths: ["q_and_a_entry.answer"],
+          paths: ["q_and_a_entry.answer", "description"],
           renderOption: richTextRenderOptions,
         });
-        setFaqs(entry[0][0].q_and_a_entry);
+        setPageDate(entry[0][0]);
       })
       .catch((error) => console.error(error));
   }, []);
 
+  const title = pageData.title ?? "";
+  const description = pageData.description ?? "";
+  const faqs = pageData.q_and_a_entry ?? [];
+
   return (
     <div className="flex flex-col gap-4">
-      {faqs.map((faq) => (
-        <Faq key={faq.question} question={faq.question} answer={faq.answer} />
-      ))}
+      <h2>{title}</h2>
+      <div
+        className="flex flex-col gap-1"
+        dangerouslySetInnerHTML={{ __html: description }}
+      />
+      <div className="flex flex-col gap-4">
+        {faqs.map((faq) => (
+          <Faq key={faq.question} question={faq.question} answer={faq.answer} />
+        ))}
+      </div>
     </div>
   );
 }

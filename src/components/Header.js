@@ -14,40 +14,38 @@ export default function Header({ slogan }) {
     });
     const Query = Stack.ContentType("navigation").Query();
     Query.language("en-us")
+      .includeReference([
+        "navigation_links.internal_link.homepage",
+        "navigation_links.internal_link.newspage",
+        "navigation_links.internal_link.faq",
+      ])
       .toJSON()
       .find()
-      .then((result) => setNavigation(result[0][0]))
+      .then((result) => {
+        setNavigation(
+          result[0][0].navigation_links.map((item) => ({
+            url: item.internal_link[0].url,
+            label: item.internal_link[0].title,
+          }))
+        );
+      })
       .catch((error) => console.error(error));
   }, []);
-
-  const navigations = [
-    {
-      url: "/",
-      label: "Home",
-    },
-    {
-      url: "/news",
-      label: "All news",
-    },
-    {
-      url: "/faq",
-      label: "FAQ",
-    },
-  ];
 
   return (
     <header className="w-full h-20 bg-sky-500 flex items-center justify-center">
       <h1>Muppet News</h1>
       <div className="flex gap-3">
-        {navigations.map((link) => (
-          <Link
-            className="p-2 rounded-xl bg-sky-800 text-cyan-50"
-            key={link.label}
-            to={link.url}
-          >
-            {link.label}
-          </Link>
-        ))}
+        {navigation !== null &&
+          navigation.map((link) => (
+            <Link
+              className="p-2 rounded-xl bg-sky-800 text-cyan-50"
+              key={link.label}
+              to={link.url}
+            >
+              {link.label}
+            </Link>
+          ))}
       </div>
       <p className="text-xl">{slogan}</p>
     </header>

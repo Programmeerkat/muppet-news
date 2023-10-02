@@ -1,8 +1,13 @@
 import { useState, useEffect } from "react";
 import Contentstack from "contentstack";
+import Newsspotlight from "../components/Newsspotlight";
+import Newspanel from "../components/Newspanel";
+import Authorspotlight from "../components/Authorspotlight";
+import Authorpanelcollection from "../components/Authorpanelcollection";
+import richTextRenderOptions from "../utils/richTextRenderOptions";
 
 export default function Homepage() {
-  const [home, setHome] = useState([]);
+  const [homeData, setHomeData] = useState(null);
 
   useEffect(() => {
     const Stack = Contentstack.Stack({
@@ -13,14 +18,93 @@ export default function Homepage() {
     });
     const Query = Stack.ContentType("homepage").Query();
     Query.language("en-us")
+      .includeReference([
+        "homepage_components.news_spotlight.news",
+        "homepage_components.news_spotlight.news.author",
+        "homepage_components.all_news.news",
+        "homepage_components.all_news.news.author",
+        "homepage_components.author_spotlight.authors",
+        "homepage_components.all_authors.author",
+      ])
       .toJSON()
       .find()
-      .then((result) => setHome(result[0][0]))
+      .then((entry) => {
+        Contentstack.Utils.jsonToHTML({
+          entry,
+          paths: ["homepage_components.author_spotlight.authors.bio"],
+          renderOption: richTextRenderOptions,
+        });
+        setHomeData(entry[0][0]);
+      })
       .catch((error) => console.error(error));
   }, []);
+
+  const spotlightAuthor = homeData?.homepage_components.find(
+    (block) => block.author_spotlight !== undefined
+  ).author_spotlight.authors[0].uid;
+
+  const spotlightNews = homeData?.homepage_components.find(
+    (block) => block.news_spotlight !== undefined
+  ).news_spotlight.news[0].uid;
+
   return (
-    <div>
-      <p>Homepage</p>
+    <div className="flex flex-col gap-4">
+      {homeData?.homepage_components !== undefined &&
+        homeData.homepage_components.map((component) => {
+          if (component.news_spotlight !== undefined) {
+            const newsSpotlight = component.news_spotlight.news[0];
+            return (
+              <Newsspotlight
+                title={newsSpotlight.title}
+                author={newsSpotlight.author[0].title}
+                date={newsSpotlight.date}
+                summary={newsSpotlight.summary}
+                linkUrl={"news/" + newsSpotlight.uid}
+                featuredImageUrl={newsSpotlight.featured_image.url}
+              />
+            );
+          }
+          if (component.all_news !== undefined) {
+            const sortedAndFilteredNews = component.all_news.news
+              .sort((a, b) => new Date(b.date) - new Date(a.date))
+              .filter((news) => news.uid !== spotlightNews);
+            return sortedAndFilteredNews
+              .filter((news) => news.uid !== spotlightNews)
+              .sort((a, b) => a.date > b.date)
+              .map((newsItem) => (
+                <Newspanel
+                  key={newsItem.title}
+                  title={newsItem.title}
+                  author={newsItem.author[0].title}
+                  date={newsItem.date}
+                  summary={newsItem.summary}
+                  linkUrl={"news/" + newsItem.uid}
+                  featuredImageUrl={newsItem.featured_image.url}
+                />
+              ));
+          }
+          if (component.author_spotlight !== undefined) {
+            const author = component.author_spotlight.authors[0];
+            return (
+              <Authorspotlight
+                name={author.title}
+                email={author.email}
+                photoUrl={author.photo.url}
+                bio={author.bio}
+              />
+            );
+          }
+          if (component.all_authors !== undefined) {
+            return (
+              <Authorpanelcollection
+                authors={component.all_authors.author.filter(
+                  (author) => author.uid !== spotlightAuthor
+                )}
+              />
+            );
+          }
+          return undefined;
+        })}
     </div>
   );
 }

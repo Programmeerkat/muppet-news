@@ -31,12 +31,20 @@ export default function App() {
   const showBanner = settings?.banner?.display_banner ?? false;
   const bannerLabel = settings?.banner?.banner_label ?? "";
   const bannerDialog = settings?.banner?.banner_dialog ?? "";
+  const bannerColor = settings?.banner?.banner_color ?? "#ffffff";
+  const information = settings?.copyright_information ?? "";
 
   return (
     <BrowserRouter>
       <>
         <Header slogan={slogan} />
-        {showBanner && <Banner label={bannerLabel} dialog={bannerDialog} />}
+        {showBanner && (
+          <Banner
+            label={bannerLabel}
+            dialog={bannerDialog}
+            color={bannerColor}
+          />
+        )}
         <main className="max-w-3xl min-h-[300px] m-auto bg-sky-200 p-4">
           <Routes>
             <Route path="/" element={<Homepage />} />
@@ -45,7 +53,7 @@ export default function App() {
             <Route path="/faq/" element={<Faqpage />} />
           </Routes>
         </main>
-        <Footer />
+        <Footer information={information} />
       </>
     </BrowserRouter>
   );

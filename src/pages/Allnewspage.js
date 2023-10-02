@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import Contentstack from "contentstack";
+import Newspanel from "../components/Newspanel";
 
 export default function Allnewspage() {
   const [news, setNews] = useState([]);
@@ -14,6 +14,7 @@ export default function Allnewspage() {
     });
     const Query = Stack.ContentType("news").Query();
     Query.language("en-us")
+      .includeReference("author")
       .toJSON()
       .find()
       .then((result) => setNews(result[0]))
@@ -24,11 +25,15 @@ export default function Allnewspage() {
     <div className="flex gap-2 flex-col">
       <h2>All news</h2>
       {news.map((newsItem) => (
-        <div key={newsItem.title} className="p-2 rounded-xl bg-sky-100">
-          <Link to={newsItem.uid}>
-            <h3>{newsItem.title}</h3>
-          </Link>
-        </div>
+        <Newspanel
+          key={newsItem.title}
+          title={newsItem.title}
+          author={newsItem.author[0].title}
+          date={newsItem.date}
+          summary={newsItem.summary}
+          linkUrl={newsItem.uid}
+          featuredImageUrl={newsItem.featured_image.url}
+        />
       ))}
     </div>
   );

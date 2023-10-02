@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import Faq from "../components/Faq";
 import Contentstack from "contentstack";
 import richTextRenderOptions from "../utils/richTextRenderOptions";
 
@@ -30,10 +31,7 @@ export default function Faqpage() {
   return (
     <div className="flex flex-col gap-4">
       {faqs.map((faq) => (
-        <div className="p-4 rounded-xl bg-sky-100" key={faq.question}>
-          <p>{faq.question}</p>
-          <div dangerouslySetInnerHTML={{ __html: faq.answer }} />
-        </div>
+        <Faq key={faq.question} question={faq.question} answer={faq.answer} />
       ))}
     </div>
   );

@@ -17,31 +17,37 @@ export default function Header({ slogan }) {
       .toJSON()
       .find()
       .then((result) => setNavigation(result[0][0]))
-      .catch((error) => console.log(error));
+      .catch((error) => console.error(error));
   }, []);
 
   const navigations = [
     {
-      url: '/',
-      label: 'Home'
+      url: "/",
+      label: "Home",
     },
     {
-      url: '/news',
-      label: 'All news'
+      url: "/news",
+      label: "All news",
     },
     {
-      url: '/faq',
-      label: 'FAQ'
-    }
-  ]
+      url: "/faq",
+      label: "FAQ",
+    },
+  ];
 
   return (
     <header className="w-full h-20 bg-sky-500 flex items-center justify-center">
       <h1>Muppet News</h1>
       <div className="flex gap-3">
         {navigations.map((link) => (
-          <Link className="p-2 rounded-xl bg-sky-800 text-cyan-50" key={link.label} to={link.url}>{link.label}</Link>
-          ))}
+          <Link
+            className="p-2 rounded-xl bg-sky-800 text-cyan-50"
+            key={link.label}
+            to={link.url}
+          >
+            {link.label}
+          </Link>
+        ))}
       </div>
       <p className="text-xl">{slogan}</p>
     </header>

@@ -24,22 +24,19 @@ export default function App() {
       .toJSON()
       .find()
       .then((result) => setSettings(result[0][0]))
-      .catch((error) => console.log(error));
+      .catch((error) => console.error(error));
   }, []);
-  
-  const slogan = settings?.slogan ?? '';
+
+  const slogan = settings?.slogan ?? "";
   const showBanner = settings?.banner?.display_banner ?? false;
-  const bannerLabel = settings?.banner?.banner_label ?? '';
-  const bannerDialog = settings?.banner?.banner_dialog ?? '';
+  const bannerLabel = settings?.banner?.banner_label ?? "";
+  const bannerDialog = settings?.banner?.banner_dialog ?? "";
 
   return (
     <BrowserRouter>
       <>
-        <Header slogan={slogan}/>
-        {showBanner && <Banner
-          label={bannerLabel}
-          dialog={bannerDialog}
-        />}
+        <Header slogan={slogan} />
+        {showBanner && <Banner label={bannerLabel} dialog={bannerDialog} />}
         <main className="max-w-3xl min-h-[300px] m-auto bg-sky-200 p-4">
           <Routes>
             <Route path="/" element={<Homepage />} />
@@ -48,7 +45,7 @@ export default function App() {
             <Route path="/faq/" element={<Faqpage />} />
           </Routes>
         </main>
-        <Footer/>
+        <Footer />
       </>
     </BrowserRouter>
   );

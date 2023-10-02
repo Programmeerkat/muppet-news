@@ -16,13 +16,13 @@ export default function Faqpage() {
       .toJSON()
       .find()
       .then((result) => setFaqs(result[0][0].q_and_a_entry))
-      .catch((error) => console.log(error));
-    }, []);
-  
+      .catch((error) => console.error(error));
+  }, []);
+
   return (
     <div className="flex flex-col gap-4">
-      {faqs.map(faq => (
-        <div className='p-4 rounded-xl bg-sky-100' key={faq.question}>
+      {faqs.map((faq) => (
+        <div className="p-4 rounded-xl bg-sky-100" key={faq.question}>
           <p>{faq.question}</p>
           {/* <p>{faq.answer}</p> */}
         </div>

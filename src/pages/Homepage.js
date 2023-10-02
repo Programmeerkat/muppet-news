@@ -16,8 +16,8 @@ export default function Homepage() {
       .toJSON()
       .find()
       .then((result) => setHome(result[0][0]))
-      .catch((error) => console.log(error));
-    }, []);
+      .catch((error) => console.error(error));
+  }, []);
   return (
     <div>
       <p>Homepage</p>

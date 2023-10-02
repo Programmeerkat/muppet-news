@@ -17,14 +17,14 @@ export default function Newspage() {
       .toJSON()
       .find()
       .then((result) => setNews(result[0]))
-      .catch((error) => console.log(error));
+      .catch((error) => console.error(error));
   }, []);
 
   return (
     <div className="flex gap-2 flex-col">
       <h2>All news</h2>
       {news.map((newsItem) => (
-        <div className="p-2 rounded-xl bg-sky-100" >
+        <div className="p-2 rounded-xl bg-sky-100">
           <Link key={newsItem.title} to={newsItem.uid}>
             <h3>{newsItem.title}</h3>
           </Link>

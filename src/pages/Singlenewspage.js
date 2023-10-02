@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import Contentstack from "contentstack";
 import richTextRenderOptions from "../utils/richTextRenderOptions";
 
-export default function News() {
+export default function Singlenewspage() {
   const { id: newsId } = useParams();
 
   const [news, setNews] = useState(null);
@@ -35,6 +35,7 @@ export default function News() {
     <div className="p-4">
       {news !== null && (
         <div>
+          <img src={news.featured_image?.url} alt="" />
           <h2>{news.title}</h2>
           <p>Posted on: {news.date}</p>
           <p>By: {news.author[0].title}</p>

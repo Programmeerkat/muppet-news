@@ -1,45 +1,54 @@
 const richTextRenderOptions = {
-  // to render Supercharged RTE NodeType content like paragraph, link, table, order list, un-order list and more.
   p: (node, next) => {
-    return `<p class='class-id'>${next(node.children)}</p>`; // you will need to call next function with node children contents
+    return `<p>${next(node.children)}</p>`;
   },
   h1: (node, next) => {
-    return `<h1 class='class-id'>${next(node.children)}</h1>`; // you will need to call next function with node children contents
+    return `<h1>${next(node.children)}</h1>`;
   },
-  // to render Supercharged RTE MarkType content like bold, italic, underline, strikethrough, inlineCode, subscript, and superscript
-  bold: (node, text) => {
-    return `<b>${text(node.children)}</b>`;
+  h2: (node, next) => {
+    return `<h2>${next(node.children)}</h2>`;
+  },
+  h3: (node, next) => {
+    return `<h3>${next(node.children)}</h3>`;
+  },
+  bold: (text) => {
+    return `<b>${text}</b>`;
+  },
+  italic: (text) => {
+    return `<i>${text}</i>`;
   },
   // to render block-type embedded items
   block: {
-    product: (item, metadata) => {
-      return `<div>  
-            <h2 >${item.title}</h2>  
-            <img src=${item.product_image.url} alt=${item.product_image.title}/>  
-            <p>${item.price}</p>  
-            </div>`;
+    product: (entry, metadata) => {
+      return `<div>
+        <h2 >${entry.title}</h2>
+        <img src=${entry.product_image.url} alt=${entry.product_image.title}/>
+        <p>${entry.price}</p>
+      </div>`;
     },
     // to render the default
-    $default: (item, metadata) => {
-      return `<div>  
-            <h2>${item.title}</h2>  
-            <p>${item.description}</p>  
-            </div>`;
+    $default: (entry, metadata) => {
+      return `<div>
+                 <h2>${entry.title}</h2>
+                 <p>${entry.description}</p>  
+             </div>`;
     },
   },
   // to display inline embedded items
   inline: {
-    $default: (item, metadata) => {
-      return `<span><b>${item.title}</b> - ${item.description}</span>`;
+    $default: (entry) => {
+      return `<span><b>${entry.title}</b> - ${entry.description}</span>`;
     },
   },
   // to display embedded items inserted via link
-  link: (item, metadata) => {
-    return `<a href="${metadata.attributes.href}">${metadata.text}</a>`;
+  link: (entry, metadata) => {
+    return `<a class='text-sky-500' href="${metadata.attributes.href}">${metadata.text}</a>`;
   },
   // to display assets
-  display: (item, metadata) => {
-    return `<img src=${metadata.attributes.src} alt=${metadata.alt} />`;
+  display: (asset, metadata) => {
+    return `<img src=${
+      asset.url || metadata.attributes.src || metadata.attributes["asset-link"]
+    } alt=${metadata.alt}/>`;
   },
 };
 

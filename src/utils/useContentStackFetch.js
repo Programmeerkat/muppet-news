@@ -18,30 +18,18 @@ export default function useContentStackFetch({ contentType, entryUid, references
         setData(null);
         setIsLoading(true);
         setIsError(false);
-        let request;
-        if (entryUid === undefined) {
-            request = Stack.ContentType(contentType).Query().language("en-us").includeReference(references).toJSON().find();
-        } else {
-            request = Stack.ContentType(contentType).Entry(entryUid).language("en-us").includeReference(references).toJSON().fetch()
-        }
-        request.then((entry) => {
+        const response = entryUid === undefined ? Stack.ContentType(contentType).Query().language("en-us").includeReference(references).toJSON().find() : Stack.ContentType(contentType).Entry(entryUid).language("en-us").includeReference(references).toJSON().fetch();
+        response.then((entry) => {
                 Contentstack.Utils.jsonToHTML({
                     entry: entry,
                     paths: jsonToHTML,
                     renderOption: richTextRenderOptions,
                 });
-                if (entryUid === undefined) {
-                    setData(entry[0]);
-                } else {
-                    setData(entry);
-                }
-                
+                setData(entryUid === undefined ? entry[0]: entry);
                 setIsLoading(false);
-                setIsError(false);
             })
             .catch((error) => {
                 console.error(error);
-                setData(null);
                 setIsLoading(false);
                 setIsError(true);
             });

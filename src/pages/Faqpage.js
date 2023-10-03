@@ -1,50 +1,29 @@
-import { useState, useEffect } from "react";
+import useContentStackFetch from "../utils/useContentStackFetch";
 import Faq from "../components/Faq";
-import Contentstack from "contentstack";
-import richTextRenderOptions from "../utils/richTextRenderOptions";
 
 export default function Faqpage() {
-  const [pageData, setPageDate] = useState([]);
+  const fetchOptions = {
+    contentType: 'faq',
+    references: [],
+    jsonToHTML: ["q_and_a_entry.answer", "description"],
+  };
 
-  useEffect(() => {
-    const Stack = Contentstack.Stack({
-      api_key: process.env.REACT_APP_API_KEY,
-      delivery_token: process.env.REACT_APP_DELIVERY_TOKEN,
-      environment: process.env.REACT_APP_ENVIROMENT,
-      region: Contentstack.Region.EU,
-    });
-    Stack.ContentType("faq")
-      .Query()
-      .language("en-us")
-      .toJSON()
-      .find()
-      .then((entry) => {
-        Contentstack.Utils.jsonToHTML({
-          entry,
-          paths: ["q_and_a_entry.answer", "description"],
-          renderOption: richTextRenderOptions,
-        });
-        setPageDate(entry[0][0]);
-      })
-      .catch((error) => console.error(error));
-  }, []);
-
-  const title = pageData.title ?? "";
-  const description = pageData.description ?? "";
-  const faqs = pageData.q_and_a_entry ?? [];
+  const [data, isLoading, isError] = useContentStackFetch(fetchOptions);
 
   return (
     <div className="flex flex-col gap-4">
-      <h2>{title}</h2>
-      <div
+      {data !== null && <>
+        <h2>{data[0].title}</h2>
+        <div
         className="flex flex-col gap-1"
-        dangerouslySetInnerHTML={{ __html: description }}
-      />
-      <div className="flex flex-col gap-4">
-        {faqs.map((faq) => (
-          <Faq key={faq.question} question={faq.question} answer={faq.answer} />
-        ))}
-      </div>
+        dangerouslySetInnerHTML={{ __html: data[0].description }}
+        />
+        <div className="flex flex-col gap-4">
+          {data[0].q_and_a_entry.map((faq) => (
+            <Faq key={faq.question} question={faq.question} answer={faq.answer} />
+            ))}
+        </div>
+      </>}
     </div>
   );
 }

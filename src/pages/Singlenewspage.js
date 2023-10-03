@@ -1,55 +1,37 @@
-import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import Contentstack from "contentstack";
-import richTextRenderOptions from "../utils/richTextRenderOptions";
+import useContentStackFetch from "../utils/useContentStackFetch";
 import Authorspotlight from "../components/Authorspotlight";
 
 export default function Singlenewspage() {
-  const { id: newsId } = useParams();
+  const { id: newsEntryId } = useParams();
 
-  const [news, setNews] = useState(null);
+  const fetchOptions = {
+    contentType: "news",
+    entryUid: newsEntryId,
+    references: ["author"],
+    jsonToHTML: ["body", "author.bio"],
+  }
 
-  useEffect(() => {
-    const Stack = Contentstack.Stack({
-      api_key: process.env.REACT_APP_API_KEY,
-      delivery_token: process.env.REACT_APP_DELIVERY_TOKEN,
-      environment: process.env.REACT_APP_ENVIROMENT,
-      region: Contentstack.Region.EU,
-    });
-    Stack.ContentType("news")
-      .Entry(newsId)
-      .includeReference("author")
-      .toJSON()
-      .fetch()
-      .then((entry) => {
-        Contentstack.Utils.jsonToHTML({
-          entry,
-          paths: ["body", "author.bio"],
-          renderOption: richTextRenderOptions,
-        });
-        setNews(entry);
-      })
-      .catch((error) => console.error(error));
-  }, [newsId]);
+  const [newsItem, isLoading, isError] = useContentStackFetch(fetchOptions);
 
   return (
     <div className="p-4">
-      {news !== null && (
+      {newsItem !== null && (
         <div>
-          <img src={news.featured_image?.url} alt="" />
-          <h2>{news.title}</h2>
-          <p>Posted on: {news.date}</p>
-          <p>By: {news.author[0].title}</p>
+          <img src={newsItem.featured_image?.url} alt="" />
+          <h2>{newsItem.title}</h2>
+          <p>Posted on: {newsItem.date}</p>
+          <p>By: {newsItem.author[0].title}</p>
           <div
             className="flex flex-col gap-1"
-            dangerouslySetInnerHTML={{ __html: news.body }}
+            dangerouslySetInnerHTML={{ __html: newsItem.body }}
           />
           <h2>About the author:</h2>
           <Authorspotlight
-            name={news.author[0]?.title}
-            email={news.author[0]?.email}
-            photoUrl={news.author[0]?.photo?.url}
-            bio={news.author[0]?.bio}
+            name={newsItem.author[0]?.title}
+            email={newsItem.author[0]?.email}
+            photoUrl={newsItem.author[0]?.photo?.url}
+            bio={newsItem.author[0]?.bio}
           />
         </div>
       )}

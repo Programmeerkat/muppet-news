@@ -1,56 +1,29 @@
-import { useState, useEffect } from "react";
-import Contentstack from "contentstack";
+import useContentStackFetch from "../utils/useContentStackFetch";
 import Newsspotlight from "../components/Newsspotlight";
 import Newspanel from "../components/Newspanel";
 import Authorspotlight from "../components/Authorspotlight";
 import Authorpanelcollection from "../components/Authorpanelcollection";
-import richTextRenderOptions from "../utils/richTextRenderOptions";
 
 export default function Homepage() {
-  const [homeData, setHomeData] = useState(null);
+  const fetchOptions = {
+    contentType: 'homepage',
+    references: [
+      "homepage_components.news_spotlight.news",
+      "homepage_components.news_spotlight.news.author",
+      "homepage_components.all_news.news",
+      "homepage_components.all_news.news.author",
+      "homepage_components.author_spotlight.authors",
+      "homepage_components.all_authors.author",
+    ],
+    jsonToHTML: ["homepage_components.author_spotlight.authors.bio"],
+  };
 
-  useEffect(() => {
-    const Stack = Contentstack.Stack({
-      api_key: process.env.REACT_APP_API_KEY,
-      delivery_token: process.env.REACT_APP_DELIVERY_TOKEN,
-      environment: process.env.REACT_APP_ENVIROMENT,
-      region: Contentstack.Region.EU,
-    });
-    const Query = Stack.ContentType("homepage").Query();
-    Query.language("en-us")
-      .includeReference([
-        "homepage_components.news_spotlight.news",
-        "homepage_components.news_spotlight.news.author",
-        "homepage_components.all_news.news",
-        "homepage_components.all_news.news.author",
-        "homepage_components.author_spotlight.authors",
-        "homepage_components.all_authors.author",
-      ])
-      .toJSON()
-      .find()
-      .then((entry) => {
-        Contentstack.Utils.jsonToHTML({
-          entry,
-          paths: ["homepage_components.author_spotlight.authors.bio"],
-          renderOption: richTextRenderOptions,
-        });
-        setHomeData(entry[0][0]);
-      })
-      .catch((error) => console.error(error));
-  }, []);
-
-  const spotlightAuthor = homeData?.homepage_components.find(
-    (block) => block.author_spotlight !== undefined
-  ).author_spotlight.authors[0].uid;
-
-  const spotlightNews = homeData?.homepage_components.find(
-    (block) => block.news_spotlight !== undefined
-  ).news_spotlight.news[0].uid;
+  const [data, isLoading, isError] = useContentStackFetch(fetchOptions);
 
   return (
     <div className="flex flex-col gap-4">
-      {homeData?.homepage_components !== undefined &&
-        homeData.homepage_components.map((component) => {
+      {data !== null &&
+        data[0].homepage_components.map((component) => {
           if (component.news_spotlight !== undefined) {
             const newsSpotlight = component.news_spotlight.news[0];
             return (
@@ -65,6 +38,9 @@ export default function Homepage() {
             );
           }
           if (component.all_news !== undefined) {
+            const spotlightNews = data[0]?.homepage_components.find(
+              (block) => block.news_spotlight !== undefined
+            ).news_spotlight.news[0].uid;
             const sortedAndFilteredNews = component.all_news.news
               .sort((a, b) => new Date(b.date) - new Date(a.date))
               .filter((news) => news.uid !== spotlightNews);
@@ -95,6 +71,9 @@ export default function Homepage() {
             );
           }
           if (component.all_authors !== undefined) {
+            const spotlightAuthor = data[0]?.homepage_components.find(
+              (block) => block.author_spotlight !== undefined
+            ).author_spotlight.authors[0].uid;
             return (
               <Authorpanelcollection
                 authors={component.all_authors.author.filter(

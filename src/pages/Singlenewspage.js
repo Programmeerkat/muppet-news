@@ -29,7 +29,11 @@ export default function Singlenewspage() {
       <div className="p-4">
         {newsItem !== null && (
           <div>
-            <img src={newsItem.featured_image?.url} alt="" />
+            <img
+              src={newsItem.featured_image?.url}
+              alt=""
+              className="w-full rounded-xl"
+            />
             <h2>{newsItem.title}</h2>
             <p>Posted on: {newsItem.date}</p>
             <p>By: {newsItem.author[0].title}</p>

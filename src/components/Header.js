@@ -3,7 +3,7 @@ import useContentStackFetch from "../utils/useContentStackFetch";
 
 export default function Header({ slogan }) {
   const fetchOptions = {
-    contentType: 'navigation',
+    contentType: "navigation",
     references: [
       "navigation_links.internal_link.homepage",
       "navigation_links.internal_link.newspage",

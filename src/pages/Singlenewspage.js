@@ -10,7 +10,7 @@ export default function Singlenewspage() {
     entryUid: newsEntryId,
     references: ["author"],
     jsonToHTML: ["body", "author.bio"],
-  }
+  };
 
   const [newsItem, isLoading, isError] = useContentStackFetch(fetchOptions);
 

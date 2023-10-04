@@ -6,7 +6,7 @@ import Authorpanelcollection from "../components/Authorpanelcollection";
 
 export default function Homepage() {
   const fetchOptions = {
-    contentType: 'homepage',
+    contentType: "homepage",
     references: [
       "homepage_components.news_spotlight.news",
       "homepage_components.news_spotlight.news.author",

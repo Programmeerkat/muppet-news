@@ -3,7 +3,7 @@ import Faq from "../components/Faq";
 
 export default function Faqpage() {
   const fetchOptions = {
-    contentType: 'faq',
+    contentType: "faq",
     references: [],
     jsonToHTML: ["q_and_a_entry.answer", "description"],
   };
@@ -12,18 +12,24 @@ export default function Faqpage() {
 
   return (
     <div className="flex flex-col gap-4">
-      {data !== null && <>
-        <h2>{data[0].title}</h2>
-        <div
-        className="flex flex-col gap-1"
-        dangerouslySetInnerHTML={{ __html: data[0].description }}
-        />
-        <div className="flex flex-col gap-4">
-          {data[0].q_and_a_entry.map((faq) => (
-            <Faq key={faq.question} question={faq.question} answer={faq.answer} />
+      {data !== null && (
+        <>
+          <h2>{data[0].title}</h2>
+          <div
+            className="flex flex-col gap-1"
+            dangerouslySetInnerHTML={{ __html: data[0].description }}
+          />
+          <div className="flex flex-col gap-4">
+            {data[0].q_and_a_entry.map((faq) => (
+              <Faq
+                key={faq.question}
+                question={faq.question}
+                answer={faq.answer}
+              />
             ))}
-        </div>
-      </>}
+          </div>
+        </>
+      )}
     </div>
   );
 }

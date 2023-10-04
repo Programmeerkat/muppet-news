@@ -45,7 +45,7 @@ export default function Homepage() {
               .sort((a, b) => new Date(b.date) - new Date(a.date))
               .filter((news) => news.uid !== spotlightNews);
             return (
-              <>
+              <div className="flex flex-col gap-2">
                 <h2>{component.all_news.title}</h2>
                 {sortedAndFilteredNews
                   .filter((news) => news.uid !== spotlightNews)
@@ -61,13 +61,13 @@ export default function Homepage() {
                       featuredImageUrl={newsItem.featured_image.url}
                     />
                   ))}
-              </>
+              </div>
             );
           }
           if (component.author_spotlight !== undefined) {
             const author = component.author_spotlight.authors[0];
             return (
-              <div>
+              <div className="flex flex-col gap-2">
                 <h2>{component.author_spotlight.title}</h2>
                 <Authorspotlight
                   name={author.title}
@@ -83,7 +83,7 @@ export default function Homepage() {
               (block) => block.author_spotlight !== undefined
             ).author_spotlight.authors[0].uid;
             return (
-              <div>
+              <div className="flex flex-col gap-2">
                 <h2>{component.all_authors.title}</h2>
                 <Authorpanelcollection
                   authors={component.all_authors.author.filter(

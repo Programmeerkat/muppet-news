@@ -44,30 +44,38 @@ export default function Homepage() {
             const sortedAndFilteredNews = component.all_news.news
               .sort((a, b) => new Date(b.date) - new Date(a.date))
               .filter((news) => news.uid !== spotlightNews);
-            return sortedAndFilteredNews
-              .filter((news) => news.uid !== spotlightNews)
-              .sort((a, b) => a.date > b.date)
-              .map((newsItem) => (
-                <Newspanel
-                  key={newsItem.title}
-                  title={newsItem.title}
-                  author={newsItem.author[0].title}
-                  date={newsItem.date}
-                  summary={newsItem.summary}
-                  linkUrl={"news/" + newsItem.uid}
-                  featuredImageUrl={newsItem.featured_image.url}
-                />
-              ));
+            return (
+              <>
+                <h2>{component.all_news.title}</h2>
+                {sortedAndFilteredNews
+                  .filter((news) => news.uid !== spotlightNews)
+                  .sort((a, b) => a.date > b.date)
+                  .map((newsItem) => (
+                    <Newspanel
+                      key={newsItem.title}
+                      title={newsItem.title}
+                      author={newsItem.author[0].title}
+                      date={newsItem.date}
+                      summary={newsItem.summary}
+                      linkUrl={"news/" + newsItem.uid}
+                      featuredImageUrl={newsItem.featured_image.url}
+                    />
+                  ))}
+              </>
+            );
           }
           if (component.author_spotlight !== undefined) {
             const author = component.author_spotlight.authors[0];
             return (
-              <Authorspotlight
-                name={author.title}
-                email={author.email}
-                photoUrl={author.photo.url}
-                bio={author.bio}
-              />
+              <div>
+                <h2>{component.author_spotlight.title}</h2>
+                <Authorspotlight
+                  name={author.title}
+                  email={author.email}
+                  photoUrl={author.photo.url}
+                  bio={author.bio}
+                />
+              </div>
             );
           }
           if (component.all_authors !== undefined) {
@@ -75,11 +83,14 @@ export default function Homepage() {
               (block) => block.author_spotlight !== undefined
             ).author_spotlight.authors[0].uid;
             return (
-              <Authorpanelcollection
-                authors={component.all_authors.author.filter(
-                  (author) => author.uid !== spotlightAuthor
-                )}
-              />
+              <div>
+                <h2>{component.all_authors.title}</h2>
+                <Authorpanelcollection
+                  authors={component.all_authors.author.filter(
+                    (author) => author.uid !== spotlightAuthor
+                  )}
+                />
+              </div>
             );
           }
           return undefined;

@@ -18,7 +18,7 @@ export default function Header({ slogan }) {
     <header className="w-full h-20 bg-sky-500 flex justify-center">
       <div className="max-w-3xl w-full h-full flex items-center justify-between">
         <h1>Muppet News</h1>
-        <p className="text-xl w-48 text-center">
+        <p className="text-xl w-40 text-center">
           <i>{slogan}</i>
         </p>
         <div className="flex gap-3">

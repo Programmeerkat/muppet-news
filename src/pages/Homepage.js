@@ -21,10 +21,6 @@ export default function Homepage() {
 
   const [data, isLoading, isError] = useContentStackFetch(fetchOptions);
 
-  if (data !== null) {
-    console.log(data[0].seo.title);
-  }
-
   return (
     <>
       {data !== null && (
